@@ -1,14 +1,16 @@
-# backend/app.py
 from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
-from transformers import AutoFeatureExtractor, AutoModelForImageClassification
 from PIL import Image
-import torch
 import io
+import base64
+import requests
+import os
+from dotenv import load_dotenv
+
+load_dotenv()  # 🔒 Load .env variables
 
 app = FastAPI()
 
-# Allow CORS (adjust for your frontend domain if needed)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -17,21 +19,32 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Load model and feature extractor once
-model_name = "OttoYu/TreeClassification"
-model = AutoModelForImageClassification.from_pretrained(model_name)
-extractor = AutoFeatureExtractor.from_pretrained(model_name)
+HF_API_URL = "https://api-inference.huggingface.co/models/OttoYu/TreeClassification"
+HF_API_TOKEN = os.getenv("HF_API_TOKEN")
 
 @app.post("/predict")
 async def predict(file: UploadFile = File(...)):
     image_data = await file.read()
-    image = Image.open(io.BytesIO(image_data)).convert("RGB")
+    base64_image = base64.b64encode(image_data).decode("utf-8")
 
-    inputs = extractor(images=image, return_tensors="pt")
-    with torch.no_grad():
-        outputs = model(**inputs)
-        logits = outputs.logits
-        predicted_class_idx = logits.argmax(-1).item()
-        label = model.config.id2label[predicted_class_idx]
+    headers = {
+        "Authorization": f"Bearer {HF_API_TOKEN}",
+        "Content-Type": "application/json"
+    }
+
+    response = requests.post(
+        HF_API_URL,
+        headers=headers,
+        json={"inputs": {"image": base64_image}}
+    )
+
+    if response.status_code != 200:
+        return {"error": "Failed to get prediction from Hugging Face API", "details": response.text}
+
+    result = response.json()
+    try:
+        label = result[0]["label"]
+    except Exception:
+        label = "ไม่สามารถจำแนกได้"
 
     return {"label": label}
