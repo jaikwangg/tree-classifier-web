@@ -36,7 +36,7 @@ async def predict(file: UploadFile = File(...)):
     response = requests.post(
         HF_API_URL,
         headers=headers,
-        json={"inputs": {"image": base64_image}}
+        json={"inputs": f"data:image/jpeg;base64,{base64_image}"}
     )
 
     if response.status_code != 200:
