@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-# tree-classifier-web
-=======
 # 🌳 Tree Classification API (Lightweight via Hugging Face)
 
 This is a lightweight FastAPI backend that sends images to Hugging Face Inference API to classify tree species using the `OttoYu/TreeClassification` model.
@@ -55,4 +52,3 @@ HF_API_TOKEN=hf_XXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 ## 🧠 Model
 
 Powered by [OttoYu/TreeClassification](https://huggingface.co/OttoYu/TreeClassification) on Hugging Face.
->>>>>>> 7e0a396 (Update api)

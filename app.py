@@ -6,6 +6,7 @@ import base64
 import requests
 import os
 from dotenv import load_dotenv
+import multipart
 
 load_dotenv()  # 🔒 Load .env variables
 
