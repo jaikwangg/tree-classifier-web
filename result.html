@@ -1,0 +1,56 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ผลลัพธ์การจำแนกต้นไม้</title>
+  <style>
+    body {
+      font-family: 'Sarabun', sans-serif;
+      background-color: #f0f9f0;
+      text-align: center;
+      padding: 40px;
+    }
+    .main-image img {
+      width: 300px;
+      border-radius: 10px;
+    }
+    .results {
+      margin-top: 20px;
+      font-size: 18px;
+      color: #2e7d32;
+    }
+  </style>
+</head>
+<body>
+  <h1>🌳 ผลลัพธ์ของต้นไม้ที่คุณอัปโหลด</h1>
+  <div class="main-image">
+    <img src="" alt="Uploaded Tree Image" />
+  </div>
+  <div class="results" id="results">⏳ กำลังวิเคราะห์ภาพ...</div>
+
+  <script>
+    window.addEventListener("DOMContentLoaded", async () => {
+      const base64Image = localStorage.getItem("uploadedImage");
+      if (!base64Image) return;
+
+      // แสดงภาพ
+      document.querySelector(".main-image img").src = base64Image;
+
+      // แปลง base64 เป็น Blob แล้วส่งไป API
+      const blob = await (await fetch(base64Image)).blob();
+      const formData = new FormData();
+      formData.append("file", blob, "image.jpg");
+
+      const response = await fetch("http://localhost:8000/predict", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+      document.getElementById("results").innerHTML = `🌿 โมเดลคาดว่าเป็น: <strong>${data.label}</strong>`;
+    });
+  </script>
+</body>
+</html>

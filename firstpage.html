@@ -1,0 +1,168 @@
+
+<!DOCTYPE html> 
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tree Classifier</title>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;600&family=Sarabun:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Sarabun', sans-serif;
+      background-color: #000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .container {
+      background-color: #A7D7A9;
+      border-radius: 10px;
+      padding: 80px;
+      text-align: center;
+      width: 1500px;
+      height: 750px;
+      overflow-y: auto;
+    }
+
+    h1 {
+      font-family: 'Instrument Sans', sans-serif;
+      font-weight: 1500;
+      color: #000000;
+      margin-top: 100px;
+    }
+
+    p {
+      font-size: 16px;
+      color: #4A6D4A;
+    }
+
+    .upload-container {
+      margin: 40px 0;
+      padding: 50px;
+      background-color: #fff;
+      width: 1270px;
+      height: 300px;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .upload-options {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 20px;
+    }
+
+    .option {
+      text-align: center;
+      cursor: pointer;
+    }
+
+    .option img {
+      width: 70px;
+      height: 70px;
+    }
+
+    .search-bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    input[type="text"] {
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      width: 300px;
+    }
+
+    button {
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .gallery img {
+      width: 100px;
+      height: 100px;
+      border-radius: 5px;
+      object-fit: cover;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Tree Classifier 🌳</h1>
+    <p>ตรวจสอบชนิดต้นไม้จากภาพถ่ายของคุณได้ทันที!</p>
+
+    <div class="upload-container">
+      <div class="upload-options">
+        <div class="option">
+          <img src="upload-icon.png" alt="Upload">
+          <p>อัปโหลดภาพของคุณ</p>
+          <input type="file" id="fileUpload" style="display: none;" onchange="handleFileUpload(event)">
+        </div>
+        <div class="option" onclick="openCamera()">
+          <img src="camera-icon.png" alt="Camera">
+          <p>จับภาพด้วยกล้อง</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function handleFileUpload(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          localStorage.setItem("uploadedImage", reader.result);
+          window.location.href = 'result.html';
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function openCamera() {
+      navigator.mediaDevices.getUserMedia({ video: true })
+        .then((stream) => {
+          const video = document.createElement('video');
+          video.srcObject = stream;
+          video.autoplay = true;
+          video.style.width = '100%';
+          video.style.borderRadius = '10px';
+          document.body.appendChild(video);
+          video.addEventListener('click', () => {
+            window.location.href = 'result.html';
+          });
+        })
+        .catch((error) => {
+          alert('ไม่สามารถเข้าถึงกล้องได้: ' + error.message);
+        });
+    }
+
+    document.querySelector('.option img[alt="Upload"]').addEventListener('click', () => {
+      document.getElementById('fileUpload').click();
+    });
+  </script>
+</body>
+</html>
