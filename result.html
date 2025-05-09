@@ -49,6 +49,8 @@
       });
 
       const data = await response.json();
+      console.log("API response:", data);
+
       document.getElementById("results").innerHTML = `🌿 โมเดลคาดว่าเป็น: <strong>${data.label}</strong>`;
     });
   </script>
