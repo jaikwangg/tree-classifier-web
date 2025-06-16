@@ -34,25 +34,31 @@
     window.addEventListener("DOMContentLoaded", async () => {
       const base64Image = localStorage.getItem("uploadedImage");
       if (!base64Image) return;
-
-      // แสดงภาพ
+  
       document.querySelector(".main-image img").src = base64Image;
-
-      // แปลง base64 เป็น Blob แล้วส่งไป API
-      const blob = await (await fetch(base64Image)).blob();
-      const formData = new FormData();
-      formData.append("file", blob, "image.jpg");
-
-      const response = await fetch("https://jkcoolkidz-deeptree.hf.space", {
-        method: "POST",
-        body: formData,
-      });
-
-      const data = await response.json();
-      console.log("API response:", data);
-
-      document.getElementById("results").innerHTML = `🌿 โมเดลคาดว่าเป็น: <strong>${data.label}</strong>`;
+  
+      try {
+        // แปลง base64 เป็น Blob แล้วส่งไป API
+        const blob = await (await fetch(base64Image)).blob();
+        const formData = new FormData();
+        formData.append("file", blob, "image.jpg");
+  
+        const response = await fetch("https://jkcoolkidz-deeptree.hf.space/predict", {
+          method: "POST",
+          body: formData,
+        });
+  
+        const data = await response.json();
+        console.log("API response:", data);
+  
+        document.getElementById("results").innerHTML =
+          `🌿 โมเดลคาดว่าเป็น: <strong>${data.prediction}</strong>`;
+      } catch (err) {
+        console.error("Error calling API:", err);
+        document.getElementById("results").innerHTML = `❌ เกิดข้อผิดพลาดในการวิเคราะห์`;
+      }
     });
   </script>
+  
 </body>
 </html>
